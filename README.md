@@ -506,4 +506,46 @@ export default App;
 
 [top](#table-of-contents)
 
+## useDebugValue For Custom Hook Libraries
+
+`useDebugValue(value)`
+
+- `useDebugValue` can be used to display a label for custom hooks in React DevTools
+
+> Tip:
+>
+> We don’t recommend adding debug values to every custom Hook. It’s most valuable for
+> custom Hooks that are part of shared libraries.
+
+_src/hooks/useTitleInput.js_
+
+```javascript
+import { useState, useEffect, useDebugValue } from 'react';
+
+export default function useTitleInput(initialValue) {
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    document.title = value;
+  });
+
+  useDebugValue(value);
+  // useDebugValue(value.length > 0 ? 'Full' : 'Empty');
+
+  return [value, setValue];
+}
+```
+
+_Before `useDebugValue`_
+
+![Before useDebugValue](assets/images/useDebugValue1.png)
+![Before useDebugValue](assets/images/useDebugValue2.png)
+
+_After `useDebugValue`_
+
+![Before useDebugValue](assets/images/useDebugValue3.png)
+![Before useDebugValue](assets/images/useDebugValue4.png)
+
+[top](#table-of-contents)
+
 [^1]: an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again
