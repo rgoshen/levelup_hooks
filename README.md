@@ -16,6 +16,7 @@
   - [Creating Custom Hooks](#creating-custom-hooks)
   - [Use Refs with useRef](#use-refs-with-useref)
   - [Context with Hooks](#context-with-hooks)
+  - [Advanced State Management with useReducer](#advanced-state-management-with-usereducer)
 
 ## What are React Hooks
 
@@ -260,7 +261,7 @@ export default App;
 
 - Accepts a context object (the value returned from `React.createContext`) and returns the current context value for that context
 - The current context value is determined by the `value` prop of the nearest`<MyContext.Provider>` above the calling component in the tree.
-- When the nearest` <MyContext.Provider>` above the component updates, this Hook will trigger a rerender with the latest context `value` passed to that `MyContext` provider.
+- When the nearest`<MyContext.Provider>` above the component updates, this Hook will trigger a rerender with the latest context `value` passed to that `MyContext` provider.
 - share state all over you app
 
 1. create a provider (`export const UserContext = createContext()`) and export it
@@ -333,6 +334,103 @@ const Toggle = () => {
 };
 
 export default Toggle;
+```
+
+[top](#table-of-contents)
+
+## Advanced State Management with useReducer
+
+`const [state, dispatch] = useReducer(reducer, initialArg, init);`
+
+- An alternative to `useState`. Accepts a reducer of type `(state, action) => newState`, and returns the current state paired with a dispatch method.
+- `useReducer` is usually preferable to `useState` when you have complex state logic that involves multiple sub-values or when the next state depends on the previous one.
+- `useReducer` also lets you optimize performance for components that trigger deep updates because **you can pass `dispatch` down instead of callbacks**
+
+_src/App.js_
+
+```javascript
+import React, { useState, useEffect, useRef, createContext } from 'react';
+import Toggle from './Toggle';
+import useTitleInput from './hooks/useTitleInput';
+import Counter from './Counter';
+
+export const UserContext = createContext();
+
+const App = () => {
+  const [name, setName] = useTitleInput('');
+  const ref = useRef();
+
+  return (
+    <UserContext.Provider
+      value={{
+        user: true,
+      }}
+    >
+      <div className='main-wrapper' ref={ref}>
+        <h1 onClick={() => ref.current.classList.add('new-class-name')}>
+          Level Up Dishes
+        </h1>
+        <Toggle />
+        <Counter />
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <input
+            type='text'
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
+          <button>Submit</button>
+        </form>
+      </div>
+    </UserContext.Provider>
+  );
+};
+
+export default App;
+```
+
+_src/Counter.js_
+
+```javascript
+import React, { useReducer } from 'react';
+
+const initialState = { count: 0 };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'add':
+      return {
+        count: state.count + action.value,
+      };
+    case 'minus':
+      return {
+        count: state.count - 1,
+      };
+    case 'reset':
+      return {
+        count: initialState.count,
+      };
+    default:
+      throw new Error();
+  }
+}
+
+const Counter = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <div>
+      <h3>{state.count}</h3>
+      <button onClick={() => dispatch({ type: 'add', value: 10 })}>+</button>
+      <button onClick={() => dispatch({ type: 'minus' })}>-</button>
+      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>
+    </div>
+  );
+};
+
+export default Counter;
 ```
 
 [top](#table-of-contents)
