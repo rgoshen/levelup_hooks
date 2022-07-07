@@ -16,6 +16,12 @@ const App = () => {
     setDishes(data);
   };
 
+  // will everytime you type in input box
+  // useEffect(() => {
+  //   fetchDishes();
+  // }, [name]);
+
+  // only runs when componentDidMount would have run
   useEffect(() => {
     fetchDishes();
   }, []);
