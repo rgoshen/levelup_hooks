@@ -15,6 +15,7 @@
   - [useEffect](#useeffect)
   - [Creating Custom Hooks](#creating-custom-hooks)
   - [Use Refs with useRef](#use-refs-with-useref)
+  - [Context with Hooks](#context-with-hooks)
 
 ## What are React Hooks
 
@@ -250,5 +251,88 @@ export default App;
 
 1. attach a reference to a DOM element
 2. create a new reference
+
+[top](#table-of-contents)
+
+## Context with Hooks
+
+[useContext Docs](https://reactjs.org/docs/hooks-reference.html#usecontext)
+
+- Accepts a context object (the value returned from `React.createContext`) and returns the current context value for that context
+- The current context value is determined by the `value` prop of the nearest`<MyContext.Provider>` above the calling component in the tree.
+- When the nearest` <MyContext.Provider>` above the component updates, this Hook will trigger a rerender with the latest context `value` passed to that `MyContext` provider.
+- share state all over you app
+
+1. create a provider (`export const UserContext = createContext()`) and export it
+2. use the created provider (`<UserContext.Provider></UserContext.Provider>`)
+3. give the provider value (`<UserContext.Provider value={{user:true}}>`)
+
+_src/App.js_
+
+```javascript
+import React, { useState, useEffect, useRef, createContext } from 'react';
+import Toggle from './Toggle';
+import useTitleInput from './hooks/useTitleInput';
+
+export const UserContext = createContext();
+
+const App = () => {
+  const [name, setName] = useTitleInput('');
+  const ref = useRef();
+
+  return (
+    <UserContext.Provider
+      value={{
+        user: true,
+      }}
+    >
+      <div className='main-wrapper' ref={ref}>
+        <h1 onClick={() => ref.current.classList.add('new-class-name')}>
+          Level Up Dishes
+        </h1>
+        <Toggle />
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <input
+            type='text'
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
+          <button>Submit</button>
+        </form>
+      </div>
+    </UserContext.Provider>
+  );
+};
+
+export default App;
+```
+
+_src/hooks/Toggle.js_
+
+```javascript
+import React, { useState, useContext } from 'react';
+import { UserContext } from './App';
+
+const Toggle = () => {
+  const [isToggled, setIsToggled] = useState(false);
+  const userInfo = useContext(UserContext);
+  console.log('userInfo', userInfo);
+
+  if (!userInfo.user) return null;
+
+  return (
+    <div>
+      <button onClick={() => setIsToggled(!isToggled)}>Toggle</button>
+      {isToggled && <h2>Hello</h2>}
+    </div>
+  );
+};
+
+export default Toggle;
+```
 
 [top](#table-of-contents)
