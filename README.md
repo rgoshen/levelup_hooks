@@ -10,6 +10,7 @@
   - [Table of Contents](#table-of-contents)
   - [What are React Hooks](#what-are-react-hooks)
   - [useState](#usestate)
+  - [Refactoring a Class Component](#refactoring-a-class-component)
 
 ## What are React Hooks
 
@@ -47,6 +48,60 @@ const App = () => {
 };
 
 export default App;
+```
+
+[top](#table-of-contents)
+
+## Refactoring a Class Component
+
+Class-based component
+
+_src/Toggle.js_
+
+```javascript
+import React, { Component } from 'react';
+
+export default class Refactor extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { isToggled: false };
+  }
+
+  toggle() {
+    this.setState((state) => {
+      return { isToggled: !state.isToggled };
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.toggle}>Toggle</button>
+        {this.state.isToggled && <h2>Hello!</h2>}
+      </div>
+    );
+  }
+}
+```
+
+Function-based component
+
+_src/Toggle.js_
+
+```javascript
+import React, { useState } from 'react';
+
+const Toggle = () => {
+  const [isToggled, setIsToggled] = useState(false);
+  return (
+    <div>
+      <button onClick={() => setIsToggled(!isToggled)}>Toggle</button>
+      {isToggled && <h2>Hello</h2>}
+    </div>
+  );
+};
+
+export default Toggle;
 ```
 
 [top](#table-of-contents)
