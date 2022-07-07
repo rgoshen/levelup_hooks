@@ -14,6 +14,7 @@
   - [useState Part 2](#usestate-part-2)
   - [useEffect](#useeffect)
   - [Creating Custom Hooks](#creating-custom-hooks)
+  - [Use Refs with useRef](#use-refs-with-useref)
 
 ## What are React Hooks
 
@@ -193,5 +194,61 @@ export default function useTitleInput(initialValue) {
   return [value, setValue];
 }
 ```
+
+[top](#table-of-contents)
+
+## Use Refs with useRef
+
+[useRef Docs](https://reactjs.org/docs/hooks-reference.html#useref)
+
+- `useRef` returns a mutable ref object whose `.current` property is initialized to the passed argument (`initialValue`)
+- The returned object will persist for the full lifetime of the component.
+- handy for keeping any mutable value around similar to how you’d use instance fields in classes
+- Mutating the `.current` property doesn’t cause a re-render
+- hooks way to interact with DOM nodes via refs
+
+_src/App.js_
+
+```javascript
+import React, { useState, useEffect, useRef } from 'react';
+import Toggle from './Toggle';
+import useTitleInput from './hooks/useTitleInput';
+
+const App = () => {
+  const [name, setName] = useTitleInput('');
+  const ref = useRef();
+  // will be undefined on initial DOM load
+  // however, after the DOM is loaded and re-rendered, then
+  // ref.current will populate with div object
+  // console.log('ref', ref.current);
+
+  return (
+    <div className='main-wrapper' ref={ref}>
+      {/* <h1 onClick={() => console.log(ref.current.className)}> */}
+      <h1 onClick={() => ref.current.classList.add('new-class-name')}>
+        Level Up Dishes
+      </h1>
+      <Toggle />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <input
+          type='text'
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+        />
+        <button>Submit</button>
+      </form>
+    </div>
+  );
+};
+
+export default App;
+```
+
+1. attach a reference to a DOM element
+2. create a new reference
 
 [top](#table-of-contents)
