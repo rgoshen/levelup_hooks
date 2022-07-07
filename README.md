@@ -1,6 +1,7 @@
 # React Hooks for Everyone
 
-[![reactjs](/assets/images/reactjs.png)](https://reactjs.org/)
+[![reactjs](/assets/images/reactjs.png)](https://reactjs.org/) |
+[useHooks](https://usehooks.com/)
 
 [![React](https://img.shields.io/badge/Docs-React-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)](https://reactjs.org/docs/getting-started.html)
 
@@ -18,6 +19,7 @@
   - [Context with Hooks](#context-with-hooks)
   - [Advanced State Management with useReducer](#advanced-state-management-with-usereducer)
   - [useMemo for Expensive Functions](#usememo-for-expensive-functions)
+  - [useLayoutEffect To Wait For DOM](#uselayouteffect-to-wait-for-dom)
 
 ## What are React Hooks
 
@@ -341,6 +343,8 @@ export default Toggle;
 
 ## Advanced State Management with useReducer
 
+[useeducer Doc](https://reactjs.org/docs/hooks-reference.html#usereducer)
+
 `const [state, dispatch] = useReducer(reducer, initialArg, init);`
 
 - An alternative to `useState`. Accepts a reducer of type `(state, action) => newState`, and returns the current state paired with a dispatch method.
@@ -438,6 +442,8 @@ export default Counter;
 
 ## useMemo for Expensive Functions
 
+[useMemo Doc](https://reactjs.org/docs/hooks-reference.html#usememo)
+
 `const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);`
 
 - Returns a [memoized](https://en.wikipedia.org/wiki/Memoization)[^1] value
@@ -508,6 +514,8 @@ export default App;
 
 ## useDebugValue For Custom Hook Libraries
 
+[useDebugValue Doc](https://reactjs.org/docs/hooks-reference.html#usedebugvalue)
+
 `useDebugValue(value)`
 
 - `useDebugValue` can be used to display a label for custom hooks in React DevTools
@@ -545,6 +553,119 @@ _After `useDebugValue`_
 
 ![Before useDebugValue](assets/images/useDebugValue3.png)
 ![Before useDebugValue](assets/images/useDebugValue4.png)
+
+[top](#table-of-contents)
+
+## useLayoutEffect To Wait For DOM
+
+[useLayoutEffect Doc](https://reactjs.org/docs/hooks-reference.html#uselayouteffect)
+
+- The signature is identical to `useEffect`, but it fires synchronously after all DOM mutations
+- Use this to read layout from the DOM and synchronously re-render
+- Updates scheduled inside `useLayoutEffect` will be flushed synchronously, before the browser has a chance to paint
+- Prefer the standard `useEffect` when possible to avoid blocking visual updates
+
+_src/hooks/useBodyLockScroll.js_
+
+```javascript
+import { useLayoutEffect } from 'react';
+
+// https://usehooks.com/page/2
+export default function useBodyLockScroll() {
+  useLayoutEffect(() => {
+    // Get original value of body overflow
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    // Prevent scrolling on mount
+    document.body.style.overflow = 'hidden';
+    // Re-enable scrolling when component unmounts
+    return () => (document.body.style.overflow = originalStyle);
+  }, []);
+}
+```
+
+_src/DishForm.js_
+
+```javascript
+import React from 'react';
+import useBodyLockScroll from './hooks/useBodyLockScroll';
+
+const DishForm = () => {
+  useBodyLockScroll();
+  return (
+    <div className='dish-card'>
+      <form>
+        <div className='form-row'>
+          <label htmlFor='name'>Name: </label>
+          <input type='text' id='name' />
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default DishForm;
+```
+
+_src/App.js_
+
+```javascript
+import React, { useState, useEffect, useRef } from 'react';
+import Toggle from './Toggle';
+import useTitleInput from './hooks/useTitleInput';
+
+const App = () => {
+  const [name, setName] = useTitleInput('');
+  const [dishes, setDishes] = useState([]);
+  const ref = useRef();
+
+  const fetchDishes = async () => {
+    console.log('fetching dishes...');
+    const res = await fetch(
+      'https://my-json-server.typicode.com/leveluptuts/fakeapi/dishes'
+    );
+    const data = await res.json();
+    setDishes(data);
+  };
+
+  useEffect(() => {
+    fetchDishes();
+  }, []); // the empty array just makes sure that it will only fire on mount and unmount
+
+  return (
+    <div className='main-wrapper' ref={ref}>
+      <h1 onClick={() => ref.current.classList.add('new-class-name')}>
+        Level Up Dishes
+      </h1>
+      <Toggle />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <input
+          type='text'
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+        />
+        <button>Submit</button>
+      </form>
+      {dishes.map((dish) => (
+        <article className='dish-card dish-card--withImage' key={dish.name}>
+          <h3>{dish.name}</h3>
+          <p>{dish.desc}</p>
+          <div className='ingredients'>
+            {dish.ingredients.map((ingredient) => (
+              <span key={ingredient}>{ingredient}</span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+};
+
+export default App;
+```
 
 [top](#table-of-contents)
 
