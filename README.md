@@ -20,6 +20,7 @@
   - [Advanced State Management with useReducer](#advanced-state-management-with-usereducer)
   - [useMemo for Expensive Functions](#usememo-for-expensive-functions)
   - [useLayoutEffect To Wait For DOM](#uselayouteffect-to-wait-for-dom)
+  - [More Complex Custom Hooks](#more-complex-custom-hooks)
 
 ## What are React Hooks
 
@@ -560,6 +561,8 @@ _After `useDebugValue`_
 
 [useLayoutEffect Doc](https://reactjs.org/docs/hooks-reference.html#uselayouteffect)
 
+[useBodyLockScroll](https://usehooks.com/useLockBodyScroll/)
+
 - The signature is identical to `useEffect`, but it fires synchronously after all DOM mutations
 - Use this to read layout from the DOM and synchronously re-render
 - Updates scheduled inside `useLayoutEffect` will be flushed synchronously, before the browser has a chance to paint
@@ -665,6 +668,102 @@ const App = () => {
 };
 
 export default App;
+```
+
+[top](#table-of-contents)
+
+## More Complex Custom Hooks
+
+[useOnClickOutside](https://usehooks.com/useOnClickOutside/)
+
+_/src/hooks/useOnClickOutside.js_
+
+```javascript
+import React, { useEffect } from 'react';
+
+// https://usehooks.com/useOnClickOutside/
+export default function useOnClickOutside(ref, handler) {
+  useEffect(
+    () => {
+      const listener = (event) => {
+        // Do nothing if clicking ref's element or descendent elements
+        if (!ref.current || ref.current.contains(event.target)) {
+          return;
+        }
+
+        handler(event);
+      };
+
+      document.addEventListener('mousedown', listener);
+      document.addEventListener('touchstart', listener);
+
+      return () => {
+        document.removeEventListener('mousedown', listener);
+        document.removeEventListener('touchstart', listener);
+      };
+    },
+    // Add ref and handler to effect dependencies
+    // It's worth noting that because passed in handler is a new ...
+    // ... function on every render that will cause this effect ...
+    // ... callback/cleanup to run every render. It's not a big deal ...
+    // ... but to optimize you can wrap handler in useCallback before ...
+    // ... passing it into this hook.
+    [ref, handler]
+  );
+}
+```
+
+_src/DishForm.js_
+
+```javascript
+import React, { useRef } from 'react';
+import useBodyLockScroll from './hooks/useBodyLockScroll';
+import useOnClickOutside from './hooks/useOnClickOutside';
+
+const DishForm = ({ setIsToggled }) => {
+  const ref = useRef();
+
+  useBodyLockScroll();
+  useOnClickOutside(ref, () => {
+    setIsToggled(false);
+  });
+
+  return (
+    <div className='dish-card' ref={ref}>
+      <form>
+        <div className='form-row'>
+          <label htmlFor='name'>Name: </label>
+          <input type='text' id='name' />
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default DishForm;
+```
+
+_src/Toggle.js_
+
+```javascript
+import React, { useState } from 'react';
+import DishForm from './DishForm';
+
+const Toggle = () => {
+  const [isToggled, setIsToggled] = useState(false);
+
+  return (
+    <div>
+      {isToggled ? (
+        <DishForm setIsToggled={setIsToggled} />
+      ) : (
+        <button onClick={() => setIsToggled(!isToggled)}>Add Dish</button>
+      )}
+    </div>
+  );
+};
+
+export default Toggle;
 ```
 
 [top](#table-of-contents)
