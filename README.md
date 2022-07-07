@@ -11,6 +11,7 @@
   - [What are React Hooks](#what-are-react-hooks)
   - [useState](#usestate)
   - [Refactoring a Class Component](#refactoring-a-class-component)
+  - [useState Part 2](#usestate-part-2)
 
 ## What are React Hooks
 
@@ -21,6 +22,8 @@
 [top](#table-of-contents)
 
 ## useState
+
+[useState Docs](https://reactjs.org/docs/hooks-state.html)
 
 - can only be used on a function based component, not on a class based component
   - on a class based component, you just use state as normal
@@ -103,5 +106,11 @@ const Toggle = () => {
 
 export default Toggle;
 ```
+
+[top](#table-of-contents)
+
+## useState Part 2
+
+[useState Docs](https://reactjs.org/docs/hooks-state.html)
 
 [top](#table-of-contents)
