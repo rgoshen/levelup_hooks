@@ -12,12 +12,15 @@
   - [useState](#usestate)
   - [Refactoring a Class Component](#refactoring-a-class-component)
   - [useState Part 2](#usestate-part-2)
+  - [useEffect](#useeffect)
 
 ## What are React Hooks
 
 [React Hooks Docs](https://reactjs.org/docs/hooks-intro.html)
 
 - Hooks are a new addition in React 16.8. They let you use state and other React features for function based components without writing a class.
+- A Hook is a special function that lets you “hook into” React features.
+- When would I use a Hook? If you write a function component and realize you need to add some state to it, previously you had to convert it to a class. Now you can use a Hook inside the existing function component.
 
 [top](#table-of-contents)
 
@@ -112,5 +115,27 @@ export default Toggle;
 ## useState Part 2
 
 [useState Docs](https://reactjs.org/docs/hooks-state.html)
+
+[top](#table-of-contents)
+
+## useEffect
+
+[useEffect Docs](https://reactjs.org/docs/hooks-effect.html)
+
+- The Effect Hook lets you perform side effects in function components
+  - Data fetching, setting up a subscription, and manually changing the DOM in React components are all examples of side effects.
+
+> ❗ **Tip**
+>
+> If you’re familiar with React class lifecycle methods, you can think of `useEffect` Hook as `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` combined.
+
+- There are two common kinds of side effects in React components: those that don’t require cleanup, and those that do
+  - Sometimes, we want to **run some additional code after React has updated the DOM**
+  - Network requests, manual DOM mutations, and logging are common examples of effects that don’t require a cleanup
+- some effects do require cleanup, **we might want to set up a subscription** to some external data source
+
+  - it is important to clean up so that we don’t introduce a memory leak!
+
+- with `useEffect` will run after React has updated the DOM
 
 [top](#table-of-contents)
