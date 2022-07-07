@@ -33,6 +33,7 @@ h1 {
   display: flex;
   flex-direction: column;
   border-radius: 7px;
+  margin-top: 1rem;
   margin-bottom: 2rem;
   box-shadow: 0 62.5px 125px -25px rgba(50, 50, 73, 0.2),
     0 37.5px 75px -37.5px rgba(0, 0, 0, 0.3);
@@ -45,7 +46,8 @@ h1 {
       rgba(255, 255, 255, 1) 0%,
       rgba(255, 255, 255, 0.3) 100%
     ),
-    url('http://lorempixel.com/400/200/food') no-repeat;
+    /* url('http://lorempixel.com/400/200/food') no-repeat; */
+      url('https://loremflickr.com/320/240/food') no-repeat;
   background-size: cover;
 }
 
