@@ -17,6 +17,7 @@
   - [Use Refs with useRef](#use-refs-with-useref)
   - [Context with Hooks](#context-with-hooks)
   - [Advanced State Management with useReducer](#advanced-state-management-with-usereducer)
+  - [useMemo for Expensive Functions](#usememo-for-expensive-functions)
 
 ## What are React Hooks
 
@@ -434,3 +435,75 @@ export default Counter;
 ```
 
 [top](#table-of-contents)
+
+## useMemo for Expensive Functions
+
+`const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);`
+
+- Returns a [memoized](https://en.wikipedia.org/wiki/Memoization)[^1] value
+- Pass a “create” function and an array of dependencies
+- `useMemo` will only recompute the memoized value when one of the dependencies has changed
+- Helps to avoid expensive calculations on every render
+- The function passed to `useMemo` runs during rendering
+- Don’t do anything there that you wouldn’t normally do while rendering
+  - side effects belong in `useEffect`, not `useMemo`
+- If no array is provided, a new value will be computed on every render
+- **You may rely on `useMemo` as a performance optimization, not as a semantic guarantee**
+
+_src/App.js_
+
+```javascript
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  createContext,
+  useMemo,
+} from 'react';
+import useTitleInput from './hooks/useTitleInput';
+
+export const UserContext = createContext();
+
+const App = () => {
+  const [name, setName] = useTitleInput('');
+  const ref = useRef();
+  const reverseWord = (word) => {
+    console.log('reverseWord called');
+    return word.split('').reverse().join('');
+  };
+
+  // const TitleReversed = reverseWord('Level Up Dishes'); // not memoized
+
+  // this still calls reverseWord on every re-render
+  // const TitleReversed = useMemo( () => reverseWord( 'Level Up Dishes' ) ); // not memoized
+
+  const title = 'Level Up Dishes';
+  const TitleReversed = useMemo(() => reverseWord(title), [title]); // memomized
+
+  return (
+    <div className='main-wrapper' ref={ref}>
+      <h1 onClick={() => ref.current.classList.add('new-class-name')}>
+        {TitleReversed}
+      </h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <input
+          type='text'
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+        />
+        <button>Submit</button>
+      </form>
+    </div>
+  );
+};
+
+export default App;
+``
+
+[top](#table-of-contents)
+
+[^1]: an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again
