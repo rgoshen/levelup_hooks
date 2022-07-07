@@ -13,6 +13,7 @@
   - [Refactoring a Class Component](#refactoring-a-class-component)
   - [useState Part 2](#usestate-part-2)
   - [useEffect](#useeffect)
+  - [Creating Custom Hooks](#creating-custom-hooks)
 
 ## What are React Hooks
 
@@ -137,5 +138,60 @@ export default Toggle;
   - it is important to clean up so that we don’t introduce a memory leak!
 
 - with `useEffect` will run after React has updated the DOM
+
+[top](#table-of-contents)
+
+## Creating Custom Hooks
+
+[Docs](https://reactjs.org/docs/hooks-custom.html)
+
+- Building your own Hooks lets you extract component logic into reusable functions
+
+_src/App/js_
+
+```javascript
+import React, { useState, useEffect } from 'react';
+import useTitleInput from './hooks/useTitleInput';
+
+const App = () => {
+  const [name, setName] = useTitleInput('');
+
+  return (
+    <div className='main-wrapper'>
+      <h1>Level Up Dishes</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <input
+          type='text'
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+        />
+        <button>Submit</button>
+      </form>
+    </div>
+  );
+};
+
+export default App;
+```
+
+_src/hooks/useTitleInput.js_
+
+```javascript
+import { useState, useEffect } from 'react';
+
+export default function useTitleInput(initialValue) {
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    document.title = value;
+  });
+
+  return [value, setValue];
+}
+```
 
 [top](#table-of-contents)
