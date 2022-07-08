@@ -6,6 +6,7 @@
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
     "react-scripts": "2.1.5",
+    "react-spring": "^9.4.5",
     "react-tagsinput": "^3.19.0",
     "use-abortable-fetch": "^3.0.3"
   },
