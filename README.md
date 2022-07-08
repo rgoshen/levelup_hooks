@@ -1,9 +1,11 @@
 # React Hooks for Everyone
 
-[![reactjs](/assets/images/reactjs.png)](https://reactjs.org/) |
-[useHooks](https://usehooks.com/)
+[![reactjs](/assets/images/reactjs.png)](https://reactjs.org/)
 
-[![React](https://img.shields.io/badge/Docs-React-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)](https://reactjs.org/docs/getting-started.html)
+
+[![React](https://img.shields.io/badge/Docs-React-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)](https://reactjs.org/docs/getting-started.html) | 
+[Level Up Tutorials](https://leveluptutorials.com/) | 
+[useHooks](https://usehooks.com/)
 
 ## Table of Contents
 
